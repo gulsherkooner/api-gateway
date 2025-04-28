@@ -19,5 +19,5 @@ app.use('/auth', authRoutes);
 app.use('/auth', compositeRoutes);
 
 app.listen(port, () => {
-  logger.info(`API Gateway running on port ${port}`);
+  logger.info(`API Gateway running on port ${port}`); 
 });
