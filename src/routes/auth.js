@@ -3,6 +3,8 @@ const axios = require('axios');
 const { validateRegister, validateLogin, validateRefresh } = require('../middleware/validate');
 const validateResult = require('../middleware/validateResult');
 const limiter = require('../middleware/rateLimit');
+const { authenticateAccessToken, authenticateRefreshToken } = require('../middleware/auth');
+const { generateAccessToken, generateRefreshToken } = require('../utils/jwt');
 const logger = require('../config/logger');
 const redis = require('../config/redis');
 
@@ -15,7 +17,12 @@ const forwardRequest = async (req, res, serviceUrl, retries = 2) => {
     const response = await axios({
       method: req.method,
       url: targetUrl,
-      headers: { ...req.headers, host: undefined, connection: undefined },
+      headers: {
+        ...req.headers,
+        host: undefined,
+        connection: undefined,
+        'x-user-id': req.user?.user_id, // Add user_id from token
+      },
       data: req.body,
       timeout: 5000,
     });
@@ -51,23 +58,31 @@ router.post('/login', limiter, validateLogin, validateResult, async (req, res) =
   await forwardRequest(req, res, authServiceUrl);
 });
 
-router.post('/refresh', validateRefresh, validateResult, async (req, res) => {
+router.post('/refresh', validateRefresh, validateResult, authenticateRefreshToken, async (req, res) => {
+  try {
+    const { user_id, email, username } = req.user;
+    const newAccessToken = generateAccessToken({ user_id, email, username });
+    const newRefreshToken = generateRefreshToken({ user_id, email, username });
+
+    res.set('Set-Cookie', `refreshToken=${newRefreshToken}; HttpOnly; Path=/; Max-Age=${7 * 24 * 60 * 60}`);
+    res.status(200).json({
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
+    });
+  } catch (error) {
+    logger.error(`Refresh token error: ${error.message}`);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.get('/user', authenticateAccessToken, async (req, res) => {
   const authServiceUrl = process.env.AUTH_SERVICE_URL || 'http://localhost:3002';
   await forwardRequest(req, res, authServiceUrl);
 });
 
-router.get('/user', async (req, res) => {
-  const authServiceUrl = process.env.AUTH_SERVICE_URL || 'http://localhost:3002';
-  await forwardRequest(req, res, authServiceUrl);
-});
-
-// router.get('/composite-user', async (req, res) => {
+// router.get('/composite-user', authenticateAccessToken, async (req, res) => {
 //   try {
 //     const authHeader = req.headers.authorization;
-//     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-//       return res.status(401).json({ error: 'Unauthorized' });
-//     }
-
 //     const cacheKey = `composite-user:${authHeader.split(' ')[1]}`;
 //     const cachedData = await redis.get(cacheKey);
 
