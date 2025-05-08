@@ -1,6 +1,4 @@
-const services = {
-  auth: process.env.AUTH_SERVICE_URL || 'http://localhost:3002',
-  profile: process.env.PROFILE_SERVICE_URL || 'http://localhost:3003',
+module.exports = {
+  'auth-service': process.env.AUTH_SERVICE_URL || 'http://localhost:3002',
+  'post-service': process.env.POST_SERVICE_URL || 'http://localhost:3004',
 };
-
-module.exports = services;

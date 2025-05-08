@@ -27,6 +27,14 @@
       "src": "/auth/user",
       "dest": "index.js"
     },
+    {
+      "src": "/posts",
+      "dest": "index.js"
+    },
+    {
+      "src": "/posts/:post_id",
+      "dest": "index.js"
+    },
 
 
 
@@ -48,6 +56,14 @@
     },
     {
       "src": "/auth/user/(.*)",
+      "dest": "index.js"
+    },
+    {
+      "src": "/posts/(.*)",
+      "dest": "index.js"
+    },
+    {
+      "src": "/posts/:post_id/(.*)",
       "dest": "index.js"
     },
     {
