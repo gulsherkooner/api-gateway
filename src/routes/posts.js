@@ -21,7 +21,7 @@ router.put('/:post_id', authenticateAccessToken, async (req, res) => {
 router.delete('/:post_id', authenticateAccessToken, async (req, res) => {
   logger.info(`Handling DELETE /posts/${req.params.post_id} request`, { user_id: req.user?.user_id });
   req.headers['x-user-id'] = req.user?.user_id || '';
-  await forwardRequest(req, res, 'post-service', `posts/${req.params.post_id}`);
+  await forwardRequest(req, res, 'post-service', `posts/${req.params.post_id}`);   
 });
 
 router.get('/:post_id', async (req, res) => {
