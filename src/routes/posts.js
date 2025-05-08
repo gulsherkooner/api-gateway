@@ -6,7 +6,7 @@ const { verifyAccessToken } = require('../utils/jwt');
 
 const router = express.Router();
 
-router.post('/', authenticateAccessToken, async (req, res) => {
+router.post('/', authenticateAccessToken,express.json({ limit: '100mb' }), async (req, res) => {
   logger.info('Handling POST /posts request', { user_id: req.user?.user_id });
   req.headers['x-user-id'] = req.user?.user_id || '';
   await forwardRequest(req, res, 'post-service', 'posts');
