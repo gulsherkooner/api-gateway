@@ -35,6 +35,10 @@
       "src": "/posts/:post_id",
       "dest": "index.js"
     },
+    {
+      "src": "/posts//user/:user_id",
+      "dest": "index.js"
+    },
 
 
 
@@ -64,6 +68,10 @@
     },
     {
       "src": "/posts/:post_id/(.*)",
+      "dest": "index.js"
+    },
+    {
+      "src": "/posts//user/:user_id/(.*)",
       "dest": "index.js"
     },
     {
