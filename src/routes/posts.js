@@ -45,4 +45,23 @@ router.get('/', async (req, res) => {
   await forwardRequest(req, res, 'post-service', 'posts');
 });
 
+router.get('/user/:user_id', async (req, res) => {
+  logger.info(`Handling GET /posts/user/${req.params.user_id} request`);
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.split(' ')[1];
+    try {
+      const decoded = verifyAccessToken(token);
+      req.headers['x-user-id'] = decoded.user_id;
+      logger.info(`GET /posts/user/${req.params.user_id} with user_id: ${decoded.user_id}`);
+    } catch (error) {
+      logger.warn(`Invalid token for GET /posts/user/${req.params.user_id}: ${error.message}`);
+      return res.status(401).json({ error: 'Invalid token' });
+    }
+  } else {
+    return res.status(401).json({ error: 'Authorization header missing' });
+  }
+  await forwardRequest(req, res, 'post-service', `posts/user/${req.params.user_id}`);
+});
+
 module.exports = router;
