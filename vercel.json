@@ -86,20 +86,6 @@
       }
     }
   ],
-  "functions": {
-    "api/*": {
-      "maxDuration": 899,
-      "memory": 1024
-    },
-    "/*": {
-      "maxDuration": 899,
-      "memory": 1024
-    },
-    "/posts/*": {
-      "maxDuration": 899,
-      "memory": 1024
-    }
-  },
   "env": {
     "NODE_ENV": "production"
   }
