@@ -52,4 +52,9 @@ router.get('/user', authenticateAccessToken, async (req, res) => {
   await forwardRequest(req, res, 'auth-service', 'user');
 });
 
+router.get('/user/:user_id', async (req, res) => {
+  logger.info('Handling GET /auth/users request');
+  await forwardRequest(req, res, 'auth-service', `user/${req.params.user_id}`);
+});
+
 module.exports = router;
