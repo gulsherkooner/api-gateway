@@ -79,7 +79,7 @@
       "dest": "index.js",
       "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
       "headers": {
-        "Access-Control-Allow-Origin": "https://next-frontend-one-xi.vercel.app, http://localhost:3000",
+        "Access-Control-Allow-Origin": "https://next-frontend-one-xi.vercel.app",
         "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
         "Access-Control-Allow-Headers": "X-Requested-With, Content-Type, Authorization",
         "Access-Control-Allow-Credentials": "true"
