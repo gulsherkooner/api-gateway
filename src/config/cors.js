@@ -1,18 +1,10 @@
 const cors = require('cors');
 
-const allowedOrigins = [
-  'http://localhost:3000',
-  'https://next-frontend-one-xi.vercel.app', // Replace with your Vercel URL
-];
+const corsOptions = {
+  origin: ['https://next-frontend-one-xi.vercel.app', 'http://localhost:3000'],
+  credentials: true, // Allow cookies (e.g., refreshToken)
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['X-Requested-With, Content-Type, Authorization'],
+};
 
-module.exports = cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: ['GET', 'POST'],
-  credentials: true,
-});
+module.exports = cors(corsOptions);
