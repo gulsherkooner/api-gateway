@@ -57,4 +57,23 @@ router.get('/user/:user_id', async (req, res) => {
   await forwardRequest(req, res, 'auth-service', `user/${req.params.user_id}`);
 });
 
+router.put('/user', async (req, res) => {
+  logger.info('Handling PUT /auth/user request');
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.split(' ')[1];
+    try {
+      const decoded = verifyAccessToken(token);
+      req.headers['x-user-id'] = decoded.user_id;
+      logger.info(`PUT /auth/user with user_id: ${decoded.user_id}`);
+    } catch (error) {
+      logger.warn(`Invalid token for PUT /auth/user: ${error.message}`);
+      return res.status(401).json({ error: 'Invalid token' });
+    }
+  } else {
+    return res.status(401).json({ error: 'Authorization header missing' });
+  }
+  await forwardRequest(req, res, 'auth-service', 'user');
+});
+
 module.exports = router;
