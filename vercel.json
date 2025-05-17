@@ -32,6 +32,10 @@
       "dest": "index.js"
     },
     {
+      "src": "/auth/sendOTP",
+      "dest": "index.js"
+    },
+    {
       "src": "/posts",
       "dest": "index.js"
     },
@@ -68,6 +72,10 @@
     },
     {
       "src": "/auth/user/(.*)",
+      "dest": "index.js"
+    },
+    {
+      "src": "/auth/sendOTP/(.*)",
       "dest": "index.js"
     },
     {
