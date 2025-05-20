@@ -43,7 +43,7 @@ app.use('/auth', compositeRoutes);
 app.use('/posts', postsRoutes);
 
 //dating services routes
-app.use('/dating', datingRoutes);
+app.use('/api', datingRoutes);
 
 app.listen(port, () => {
   logger.info(`API Gateway running on port ${port}`); 
