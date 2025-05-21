@@ -7,6 +7,7 @@ const authRoutes = require('./src/routes/auth');
 const compositeRoutes = require('./src/routes/composite');
 const postsRoutes = require('./src/routes/posts');
 const datingRoutes = require('./src/routes/dating');
+const subRoutes = require("./src/routes/sub")
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -44,6 +45,8 @@ app.use('/posts', postsRoutes);
 
 //dating services routes
 app.use('/dating', datingRoutes);
+
+app.use('/followers', subRoutes);
 
 app.listen(port, () => {
   logger.info(`API Gateway running on port ${port}`); 

@@ -47,6 +47,26 @@
       "src": "/posts//user/:user_id",
       "dest": "index.js"
     },
+    {
+      "src": "/followers",
+      "dest": "index.js"
+    },
+    {
+      "src": "/followers/:target_userid",
+      "dest": "index.js"
+    },
+    {
+      "src": "/followers/check/:target_userid",
+      "dest": "index.js"
+    },
+    {
+      "src": "/followers/:user_id",
+      "dest": "index.js"
+    },
+    {
+      "src": "/followers/following/:user_id",
+      "dest": "index.js"
+    },
 
 
 
@@ -88,6 +108,26 @@
     },
     {
       "src": "/posts//user/:user_id/(.*)",
+      "dest": "index.js"
+    },
+    {
+      "src": "/followers/(.*)",
+      "dest": "index.js"
+    },
+    {
+      "src": "/followers/:target_userid/(.*)",
+      "dest": "index.js"
+    },
+    {
+      "src": "/followers/check/:target_userid/(.*)",
+      "dest": "index.js"
+    },
+    {
+      "src": "/followers/:user_id/(.*)",
+      "dest": "index.js"
+    },
+    {
+      "src": "/followers/following/:user_id/(.*)",
       "dest": "index.js"
     },
     {

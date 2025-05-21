@@ -40,11 +40,6 @@ router.get('/:post_id', async (req, res) => {
   await forwardRequest(req, res, 'post-service', `posts/${req.params.post_id}`);
 });
 
-router.get('/', async (req, res) => {
-  logger.info('Handling GET /posts request');
-  await forwardRequest(req, res, 'post-service', 'posts');
-});
-
 router.get('/user/:user_id', async (req, res) => {
   logger.info(`Handling GET /posts/user/${req.params.user_id} request`);
   const authHeader = req.headers.authorization;
@@ -62,6 +57,15 @@ router.get('/user/:user_id', async (req, res) => {
     return res.status(401).json({ error: 'Authorization header missing' });
   }
   await forwardRequest(req, res, 'post-service', `posts/user/${req.params.user_id}`);
+});
+
+router.get('/', async (req, res) => {
+  logger.info('Handling GET /posts request');
+  await forwardRequest(req, res, 'post-service', 'posts');
+});
+router.get('/user/public/:user_id', async (req, res) => {
+  logger.info('Handling GET /posts request');
+  await forwardRequest(req, res, 'post-service', `posts/user/public/${req.params.user_id}`);
 });
 
 module.exports = router;
