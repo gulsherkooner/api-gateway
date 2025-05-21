@@ -10,11 +10,11 @@ const router = express.Router();
 router.post('/profiles', authenticateAccessToken, express.json(), async (req, res) => {
   logger.info('Handling POST /dating/profiles request', { user_id: req.user?.user_id });
   req.headers['x-user-id'] = req.user?.user_id || '';
-  await forwardRequest(req, res, 'dating-service', 'dating-profile');
+  await forwardRequest(req, res, 'dating-service', 'api/dating-profile');
 });
 
 // ✅ Get user's profile by user_id
-router.get('/profiles/:user_id', async (req, res) => {
+router.get('/dating-profile/:user_id', async (req, res) => {
   logger.info(`Handling GET /dating/profiles/${req.params.user_id} request`);
   const authHeader = req.headers.authorization;
   if (authHeader && authHeader.startsWith('Bearer ')) {
@@ -26,47 +26,81 @@ router.get('/profiles/:user_id', async (req, res) => {
       logger.warn(`Invalid token: ${error.message}`);
     }
   }
-  await forwardRequest(req, res, 'dating-service', `dating-profile/${req.params.user_id}`);
+  await forwardRequest(req, res, 'dating-service', `api/dating-profile/${req.params.user_id}`);
+});
+
+router.post('/dating-profile', async (req, res) => {
+  logger.info('Handling POST /dating-profile request');
+
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.split(' ')[1];
+    try {
+      const decoded = verifyAccessToken(token); // Replace with your JWT verification logic
+      req.headers['x-user-id'] = decoded.user_id;
+    } catch (error) {
+      logger.warn(`Invalid token: ${error.message}`);
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+  } else {
+    return res.status(401).json({ message: 'Authorization header missing or malformed' });
+  }
+
+  await forwardRequest(req, res, 'dating-service', 'api/dating-profile');
 });
 
 // ✅ Get profile by Mongo _id
-router.get('/profiles/find/:_id', async (req, res) => {
+router.get('/find-dating-profile/:_id', async (req, res) => {
   logger.info(`Handling GET /dating/profiles/find/${req.params._id}`);
-  await forwardRequest(req, res, 'dating-service', `find-dating-profile/${req.params._id}`);
+  await forwardRequest(req, res, 'dating-service', `api/find-dating-profile/${req.params._id}`);
 });
 
 // ✅ Check if user has a profile
-router.get('/check-profile', authenticateAccessToken, async (req, res) => {
+router.get('/check-profile',authenticateAccessToken, async (req, res) => {
+  // console.log("Recived!!");
   logger.info('Handling GET /dating/check-profile request', { user_id: req.user?.user_id });
   req.headers['x-user-id'] = req.user?.user_id || '';
-  await forwardRequest(req, res, 'dating-service', 'check-profile');
+  await forwardRequest(req, res, 'dating-service', 'api/check-profile');
 });
 
 // ✅ Matchmaking with filters
 router.post('/matches', authenticateAccessToken, express.json(), async (req, res) => {
   logger.info('Handling POST /dating/matches request', { user_id: req.user?.user_id });
   req.headers['x-user-id'] = req.user?.user_id || '';
-  await forwardRequest(req, res, 'dating-service', 'matches');
-});
-
-router.get('/wallet', authenticateAccessToken, async (req, res) => {
-  logger.info('Handling GET /dating/wallet request', { user_id: req.user?.user_id });
-  req.headers['x-user-id'] = req.user?.user_id || '';
-  await forwardRequest(req, res, 'dating-service', 'wallet');
+  await forwardRequest(req, res, 'dating-service', 'api/matches');
 });
 
 // POST add funds to wallet
-router.post('/wallet/add', authenticateAccessToken, express.json(), async (req, res) => {
+router.post('/wallet/topup', authenticateAccessToken, express.json(), async (req, res) => {
   logger.info('Handling POST /dating/wallet/add request', { user_id: req.user?.user_id });
   req.headers['x-user-id'] = req.user?.user_id || '';
-  await forwardRequest(req, res, 'dating-service', 'wallet/add');
+  await forwardRequest(req, res, 'dating-service', 'api/wallet/topup');
 });
 
-// POST deduct funds from wallet
+// ✅ Deduct funds from authenticated user's wallet
 router.post('/wallet/deduct', authenticateAccessToken, express.json(), async (req, res) => {
-  logger.info('Handling POST /dating/wallet/deduct request', { user_id: req.user?.user_id });
+  const userId = req.user?.user_id;
+  logger.info('Handling POST /wallet/deduct request', { user_id: userId });
+
+  if (!userId) {
+    return res.status(401).json({ error: 'Unauthorized: user_id missing from token.' });
+  }
+
+  req.headers['x-user-id'] = userId; // Inject for downstream service
+  await forwardRequest(req, res, 'dating-service', 'api/wallet/deduct');
+});
+
+
+router.get('/wallet/:userId', async (req, res) => {
+  logger.info(`Handling GET /dating/wallet/${req.params.userId} request`);
+  await forwardRequest(req, res, 'dating-service', `api/wallet/${req.params.userId}`);
+});
+
+// ✅ Update dating profile by user_id
+router.put('/dating-profile/:user_id', authenticateAccessToken, express.json(), async (req, res) => {
+  logger.info(`Handling PUT /dating-profile/${req.params.user_id} request`, { user_id: req.user?.user_id });
   req.headers['x-user-id'] = req.user?.user_id || '';
-  await forwardRequest(req, res, 'dating-service', 'wallet/deduct');
+  await forwardRequest(req, res, 'dating-service', `api/dating-profile/${req.params.user_id}`, 'PUT');
 });
 
 module.exports = router;
