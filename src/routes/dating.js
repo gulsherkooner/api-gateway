@@ -56,7 +56,7 @@ router.get('/find-dating-profile/:_id', async (req, res) => {
 });
 
 // ✅ Check if user has a profile
-router.get('/check-profile',authenticateAccessToken, async (req, res) => {
+router.get('/check-profile', authenticateAccessToken, async (req, res) => {
   // console.log("Recived!!");
   logger.info('Handling GET /dating/check-profile request', { user_id: req.user?.user_id });
   req.headers['x-user-id'] = req.user?.user_id || '';
@@ -102,5 +102,32 @@ router.put('/dating-profile/:user_id', authenticateAccessToken, express.json(), 
   req.headers['x-user-id'] = req.user?.user_id || '';
   await forwardRequest(req, res, 'dating-service', `api/dating-profile/${req.params.user_id}`, 'PUT');
 });
+
+router.post(
+  '/dating-posts',
+  authenticateAccessToken,
+  express.json({ limit: '10mb' }), // increase limit for image upload
+  async (req, res) => {
+    logger.info('Handling POST /dating-posts request', { user_id: req.user?.user_id });
+
+    // Attach user_id from JWT to headers for downstream service
+    req.headers['x-user-id'] = req.user?.user_id || '';
+
+    // Forward request to dating-service's /api/dating-posts endpoint
+    await forwardRequest(req, res, 'dating-service', 'api/dating-posts', 'POST');
+  }
+);
+router.get(
+  '/dating-posts/me',
+  authenticateAccessToken,
+  async (req, res) => {
+    logger.info('Handling POST /dating-posts request', { user_id: req.user?.user_id });
+
+    // Attach user_id from JWT to headers for downstream service
+    req.headers['x-user-id'] = req.user?.user_id || '';
+    // Forward request to dating-service's /api/dating-posts endpoint
+    await forwardRequest(req, res, 'dating-service', 'api/dating-posts/me', 'GET');
+  }
+);
 
 module.exports = router;
