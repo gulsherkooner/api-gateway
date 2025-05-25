@@ -130,4 +130,29 @@ router.get(
   }
 );
 
+router.post('/settings/:user_id', authenticateAccessToken, express.json(), async (req, res) => {
+  const userId = req.user?.user_id;
+  logger.info('Handling POST /settings/:user_id request', { user_id: userId });
+
+  if (!userId) {
+    return res.status(401).json({ error: 'Unauthorized: user_id missing from token.' });
+  }
+
+  req.headers['x-user-id'] = userId; // Inject for downstream service
+  await forwardRequest(req, res, 'dating-service', `api/settings/${req.params.user_id}`);
+});
+
+router.get(
+  '/settings/:user_id',
+  authenticateAccessToken,
+  async (req, res) => {
+    logger.info('Handling POST /settings/:user_id request', { user_id: req.user?.user_id });
+
+    // Attach user_id from JWT to headers for downstream service
+    req.headers['x-user-id'] = req.user?.user_id || '';
+    // Forward request to dating-service's /api/dating-posts endpoint
+    await forwardRequest(req, res, 'dating-service', `api/settings/${req.params.user_id}`, 'GET');
+  }
+);
+
 module.exports = router;
