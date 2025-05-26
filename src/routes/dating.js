@@ -155,4 +155,24 @@ router.get(
   }
 );
 
+router.patch(
+  '/dating-posts/pin-post/:id',
+  authenticateAccessToken,
+  async (req, res) => {
+    logger.info('Handling PATCH /dating-posts/pin-post/:id request', {
+      user_id: req.user?.user_id,
+      post_id: req.params.id,
+    });
+
+    req.headers['x-user-id'] = req.user?.user_id || '';
+    await forwardRequest(
+      req,
+      res,
+      'dating-service',
+      `api/dating-posts/pin-post/${req.params.id}`,
+      'PATCH'
+    );
+  }
+);
+
 module.exports = router;
