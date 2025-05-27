@@ -181,4 +181,25 @@ router.post("/sendOTP", async (req, res) => {
   }
 });
 
+router.post("/change-password", authenticateAccessToken, async (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    const token = authHeader.split(" ")[1];
+    try {
+      const decoded = verifyAccessToken(token);
+      req.headers["x-user-id"] = decoded.user_id;
+      logger.info(
+        `POST /change-password with user_id: ${decoded.user_id}`
+      );
+    } catch (error) {
+      logger.warn(
+        `Invalid token for POST /change-password: ${error.message}`
+      );
+    }
+  }
+  logger.info("Handling POST /auth/change-password request");
+  await forwardRequest(req, res, "auth-service", "change-password");
+});
+
+
 module.exports = router;
