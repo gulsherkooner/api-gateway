@@ -1,0 +1,19 @@
+services:
+  api-gateway:
+    image: api-gateway:${TAG:-latest}
+    build:
+      context: /root/cent-stage/api-gateway
+      dockerfile: Dockerfile
+      cache_from:
+        - api-gateway:cache
+    env_file:
+      - /root/cent-stage/api-gateway/.env
+    ports:
+      - "3001:3001"
+    networks:
+      - cent-stage-network
+    restart: unless-stopped
+
+networks:
+  cent-stage-network:
+    external: true
