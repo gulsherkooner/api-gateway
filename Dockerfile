@@ -14,7 +14,7 @@ COPY src/ ./src/
 COPY .env ./
 
 # Expose port
-EXPOSE 2001
+EXPOSE 3001
 
 # Start the service
 CMD ["node", "index.js"]
