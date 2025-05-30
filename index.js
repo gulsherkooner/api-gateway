@@ -37,16 +37,16 @@ app.use(limiter);
 app.use(express.json());
 
 // Mount routes
-app.use('/api/auth', authRoutes);
-app.use('/api/auth', compositeRoutes);
+app.use('/auth', authRoutes);
+app.use('/auth', compositeRoutes);
 
 //post service routes
-app.use('/api/posts', postsRoutes);
+app.use('/posts', postsRoutes);
 
 //dating services routes
 app.use('/api', datingRoutes);
 
-app.use('/api/followers', subRoutes);
+app.use('/followers', subRoutes);
 
 app.listen(port, () => {
   logger.info(`API Gateway running on port ${port}`); 
