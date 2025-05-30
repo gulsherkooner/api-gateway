@@ -36,6 +36,14 @@ app.use(corsConfig);
 app.use(limiter);
 app.use(express.json());
 
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+    service: 'API Gateway'
+  });
+});
+
 // Mount routes
 app.use('/auth', authRoutes);
 app.use('/auth', compositeRoutes);
