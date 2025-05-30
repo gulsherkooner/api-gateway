@@ -56,6 +56,6 @@ app.use('/posts', postsRoutes);
 
 app.use('/followers', subRoutes);
 
-app.listen(port, () => {
-  logger.info(`API Gateway running on port ${port}`); 
+app.listen(port, '0.0.0.0', () => {
+  logger.info(`API Gateway running on port ${port}`);
 });
