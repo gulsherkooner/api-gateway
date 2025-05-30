@@ -36,7 +36,7 @@ app.use(corsConfig);
 app.use(limiter);
 app.use(express.json());
 
-app.get('/health', (req, res) => {
+app.get('/api/health', (req, res) => {
   res.status(200).json({
     status: 'OK',
     timestamp: new Date().toISOString(),
@@ -45,8 +45,8 @@ app.get('/health', (req, res) => {
 });
 
 // Mount routes
-app.use('/auth', authRoutes);
-app.use('/auth', compositeRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/auth', compositeRoutes);
 
 //post service routes
 app.use('/posts', postsRoutes);
@@ -54,7 +54,7 @@ app.use('/posts', postsRoutes);
 //dating services routes
 // app.use('/api', datingRoutes);
 
-app.use('/followers', subRoutes);
+app.use('/api/followers', subRoutes);
 
 app.listen(port, '0.0.0.0', () => {
   logger.info(`API Gateway running on port ${port}`);
