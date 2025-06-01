@@ -52,7 +52,7 @@ app.use('/auth', compositeRoutes);
 app.use('/posts', postsRoutes);
 
 //dating services routes
-// app.use('/api', datingRoutes);
+app.use('/api', datingRoutes);
 
 app.use('/followers', subRoutes);
 
