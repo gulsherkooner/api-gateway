@@ -8,6 +8,7 @@ const compositeRoutes = require('./src/routes/composite');
 const postsRoutes = require('./src/routes/posts');
 const datingRoutes = require('./src/routes/dating');
 const subRoutes = require("./src/routes/sub")
+const commentsRoutes = require('./src/routes/comments');
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -50,6 +51,8 @@ app.use('/auth', compositeRoutes);
 
 //post service routes
 app.use('/posts', postsRoutes);
+
+app.use('/comments', commentsRoutes);
 
 //dating services routes
 app.use('/date', datingRoutes);
