@@ -29,26 +29,6 @@ router.get('/dating-profile/:user_id', async (req, res) => {
   await forwardRequest(req, res, 'dating-service', `api/dating-profile/${req.params.user_id}`);
 });
 
-router.post('/dating-profile', async (req, res) => {
-  logger.info('Handling POST /dating-profile request');
-
-  const authHeader = req.headers.authorization;
-  if (authHeader && authHeader.startsWith('Bearer ')) {
-    const token = authHeader.split(' ')[1];
-    try {
-      const decoded = verifyAccessToken(token); // Replace with your JWT verification logic
-      req.headers['x-user-id'] = decoded.user_id;
-    } catch (error) {
-      logger.warn(`Invalid token: ${error.message}`);
-      return res.status(401).json({ message: 'Unauthorized' });
-    }
-  } else {
-    return res.status(401).json({ message: 'Authorization header missing or malformed' });
-  }
-
-  await forwardRequest(req, res, 'dating-service', 'api/dating-profile');
-});
-
 // ✅ Get profile by Mongo _id
 router.get('/find-dating-profile/:_id', async (req, res) => {
   logger.info(`Handling GET /dating/profiles/find/${req.params._id}`);
