@@ -36,4 +36,10 @@ router.get("/:post_id/like", authenticateAccessToken, async (req, res) => {
   await forwardRequest(req, res, "post-service", `postLikes/${req.params.post_id}/like`);
 });
 
+// Public route: Get all likes for a specific post (no authentication required)
+router.get("/:post_id/all", async (req, res) => {
+  logger.info(`Handling GET /postLikes/${req.params.post_id}/all request`);
+  await forwardRequest(req, res, "post-service", `postLikes/${req.params.post_id}/all`);
+});
+
 module.exports = router;
