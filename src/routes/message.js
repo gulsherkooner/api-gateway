@@ -6,12 +6,12 @@ const { verifyAccessToken } = require('../utils/jwt');
 
 const router = express.Router();
 
-router.post('/upload-audio', authenticateAccessToken, express.json(), async (req, res) => {
+router.post('/upload-audio', authenticateAccessToken, async (req, res) => {
   logger.info('Handling POST /messages/upload-audio request', { user_id: req.user?.user_id });
   req.headers['x-user-id'] = req.user?.user_id || '';
   await forwardRequest(req, res, 'message-service', 'upload-audio');
 });
-router.post('/upload-image', authenticateAccessToken, express.json(), async (req, res) => {
+router.post('/upload-image', authenticateAccessToken, async (req, res) => {
   logger.info('Handling POST /messages/upload-audio request', { user_id: req.user?.user_id });
   req.headers['x-user-id'] = req.user?.user_id || '';
   await forwardRequest(req, res, 'message-service', 'upload-image');
