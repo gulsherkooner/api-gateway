@@ -22,6 +22,11 @@ router.get('/conversation/:partnerId/:userId', authenticateAccessToken, async (r
   req.headers['x-user-id'] = req.params.userId || '';
   await forwardRequest(req, res, 'message-service', `conversation/${req.params.partnerId}/${req.params.userId}`);
 });
+router.get('/last-messages/:userId', authenticateAccessToken, async (req, res) => {
+  logger.info('Handling GET /last-messages/:userId request', { user_id: req.params.userId });
+  req.headers['x-user-id'] = req.params.userId || '';
+  await forwardRequest(req, res, 'message-service', `last-messages/${req.params.userId}`);
+});
 
 router.get('/unread-counts/:userId', authenticateAccessToken, async (req, res) => {
   logger.info('Handling GET /unread-counts/:userId request', { user_id: req.params.userId });
