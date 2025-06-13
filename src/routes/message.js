@@ -32,7 +32,7 @@ router.get('/unread-counts/:userId', authenticateAccessToken, async (req, res) =
 router.put('/mark-read/:fromId/:userId', authenticateAccessToken, express.json(), async (req, res) => {
   logger.info(`Handling PUT /mark-read/:fromId/:userId request`, { user_id: req.params.userId });
   req.headers['x-user-id'] = req.params.userId || '';
-  await forwardRequest(req, res, 'message-service', `mark-read/${req.params.fromId}/${req.params.userId}`, 'PUT');
+  await forwardRequest(req, res, 'message-service', `mark-read/${req.params.fromId}/${req.params.userId}`);
 });
 
 module.exports = router;
