@@ -12,6 +12,21 @@ router.post('/', authenticateAccessToken,express.json({ limit: '100mb' }), async
   await forwardRequest(req, res, 'post-service', 'posts');
 });
 
+// Public route: Get reels with pagination, seed, and optional id prioritization
+router.get('/reels', async (req, res) => {
+  logger.info('Handling GET /posts/reels request');
+  // Forward pagination, seed, and id query params if present
+  const { page, limit, seed, id } = req.query;
+  let path = 'posts/reels';
+  const params = [];
+  if (page) params.push(`page=${page}`);
+  if (limit) params.push(`limit=${limit}`);
+  if (seed) params.push(`seed=${seed}`);
+  if (id) params.push(`id=${id}`);
+  if (params.length > 0) path += `?${params.join('&')}`;
+  await forwardRequest(req, res, 'post-service', path);
+});
+
 router.put('/:post_id', authenticateAccessToken, async (req, res) => {
   logger.info(`Handling PUT /posts/${req.params.post_id} request`, { user_id: req.user?.user_id });
   req.headers['x-user-id'] = req.user?.user_id || '';
@@ -75,21 +90,6 @@ router.get('/', async (req, res) => {
 router.get('/user/public/:user_id', async (req, res) => {
   logger.info('Handling GET /posts request');
   await forwardRequest(req, res, 'post-service', `posts/user/public/${req.params.user_id}`);
-});
-
-// Public route: Get reels with pagination, seed, and optional id prioritization
-router.get('/reels', async (req, res) => {
-  logger.info('Handling GET /posts/reels request');
-  // Forward pagination, seed, and id query params if present
-  const { page, limit, seed, id } = req.query;
-  let path = 'posts/reels';
-  const params = [];
-  if (page) params.push(`page=${page}`);
-  if (limit) params.push(`limit=${limit}`);
-  if (seed) params.push(`seed=${seed}`);
-  if (id) params.push(`id=${id}`);
-  if (params.length > 0) path += `?${params.join('&')}`;
-  await forwardRequest(req, res, 'post-service', path);
 });
 
 module.exports = router;
