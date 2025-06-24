@@ -28,7 +28,7 @@ router.put(
     req.headers["x-user-id"] = req.user?.user_id || "";
     await forwardRequest(req, res, "post-service", `stories/${req.params.story_id}`);
   }
-);
+); 
 
 // Get stories feed for a specific user_id (protected, just checks x-user-id is present)
 router.get(
