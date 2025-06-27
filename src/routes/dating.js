@@ -160,4 +160,17 @@ router.patch(
   }
 );
 
+router.get('/unlocked-contacts', authenticateAccessToken, async (req, res) => {
+  const userId = req.user?.user_id;
+  logger.info('Handling GET /dating/unlocked-contacts request', { user_id: userId });
+
+  if (!userId) {
+    return res.status(401).json({ error: 'Unauthorized: user_id missing from token.' });
+  }
+
+  req.headers['x-user-id'] = userId;
+  await forwardRequest(req, res, 'dating-service', `api/unlocked-contacts/${userId}`, 'GET');
+});
+
+
 module.exports = router;
