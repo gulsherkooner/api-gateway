@@ -12,6 +12,7 @@ router.post('/profiles', authenticateAccessToken, express.json(), async (req, re
   req.headers['x-user-id'] = req.user?.user_id || '';
   await forwardRequest(req, res, 'dating-service', 'api/dating-profile');
 });
+
 router.get('/profiles', authenticateAccessToken, async (req, res) => {
   logger.info('Handling GET ALL /dating/profiles request', { user_id: req.user?.user_id });
   req.headers['x-user-id'] = req.user?.user_id || '';
