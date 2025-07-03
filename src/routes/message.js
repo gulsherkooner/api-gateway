@@ -7,18 +7,11 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const router = express.Router();
 
-router.use(
-  '/upload-media',
-  authenticateAccessToken,
-  createProxyMiddleware({
-    target: 'http://message-service:3007', // Docker internal URL
-    changeOrigin: true,
-    pathRewrite: {
-      '^/api/messages/upload-media': '/api/upload-media',
-    },
-  })
-);
-
+router.post('/upload-media', authenticateAccessToken, async (req, res) => {
+  logger.info('Handling POST /upload-media request', { user_id: req.user?.user_id });
+  req.headers['x-user-id'] = req.user?.user_id || '';
+  await forwardRequest(req, res, 'dating-service', 'upload-media');
+});
 
 router.get('/conversation/:partnerId/:userId', authenticateAccessToken, async (req, res) => {
   logger.info('Handling GET /conversation/:partnerId/:userId request', { user_id: req.params.userId });
