@@ -10,7 +10,7 @@ const router = express.Router();
 router.post('/upload-media', authenticateAccessToken, async (req, res) => {
   logger.info('Handling POST /upload-media request', { user_id: req.user?.user_id });
   req.headers['x-user-id'] = req.user?.user_id || '';
-  await forwardRequest(req, res, 'dating-service', 'upload-media');
+  await forwardRequest(req, res, 'message-service', 'upload-media');
 });
 
 router.get('/conversation/:partnerId/:userId', authenticateAccessToken, async (req, res) => {
