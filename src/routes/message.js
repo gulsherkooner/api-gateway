@@ -35,4 +35,10 @@ router.put('/mark-read/:fromId/:userId', authenticateAccessToken, async (req, re
   await forwardRequest(req, res, 'message-service', `mark-read/${req.params.fromId}/${req.params.userId}`);
 });
 
+router.delete('/:messageId', authenticateAccessToken, async (req, res) => {
+  logger.info('Handling DELETE /messages/:messageId request', { user_id: req.user?.user_id });
+  req.headers['x-user-id'] = req.user?.user_id || '';
+  await forwardRequest(req, res, 'message-service', `${req.params.messageId}`, 'DELETE');
+});
+
 module.exports = router;
