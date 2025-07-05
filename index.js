@@ -14,6 +14,7 @@ const membershipRoutes = require("./src/routes/memberships")
 const commentsRoutes = require('./src/routes/comments');
 const postLikesRoutes = require('./src/routes/postLikes');
 const viewsRoutes = require('./src/routes/views');
+const searchRoutes = require('./src/routes/search');
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -70,6 +71,8 @@ app.use('/followers', subRoutes);
 app.use('/memberships', membershipRoutes);
 
 app.use('/views', viewsRoutes);
+
+app.use('/search', searchRoutes);
 
 app.listen(port, '0.0.0.0', () => {
   logger.info(`API Gateway running on port ${port}`);
