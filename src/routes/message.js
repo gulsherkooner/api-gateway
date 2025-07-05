@@ -2,29 +2,21 @@ const express = require('express');
 const { authenticateAccessToken } = require('../middleware/auth');
 const forwardRequest = require('../utils/forwardRequest');
 const logger = require('../config/logger');
-const { verifyAccessToken } = require('../utils/jwt');
-const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const router = express.Router();
-
-router.use(
-  '/upload-media',
-  authenticateAccessToken,
-  createProxyMiddleware({
-    target: 'http://message-service:3007', // Docker internal URL
-    changeOrigin: true,
-    pathRewrite: {
-      '^/api/messages/upload-media': '/api/upload-media',
-    },
-  })
-);
-
 
 router.get('/conversation/:partnerId/:userId', authenticateAccessToken, async (req, res) => {
   logger.info('Handling GET /conversation/:partnerId/:userId request', { user_id: req.params.userId });
   req.headers['x-user-id'] = req.params.userId || '';
   await forwardRequest(req, res, 'message-service', `conversation/${req.params.partnerId}/${req.params.userId}`);
 });
+
+router.post('/:messageId/react', authenticateAccessToken, express.json(), async (req, res) => {
+  logger.info('Handling POST /messages/:messageId/react request', { user_id: req.user?.user_id });
+  req.headers['x-user-id'] = req.user?.user_id || '';
+  await forwardRequest(req, res, 'message-service', `${req.params.messageId}/react`);
+});
+
 router.get('/last-messages/:userId', authenticateAccessToken, async (req, res) => {
   logger.info('Handling GET /last-messages/:userId request', { user_id: req.params.userId });
   req.headers['x-user-id'] = req.params.userId || '';
