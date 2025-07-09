@@ -126,9 +126,6 @@ router.post("/sendOTP", async (req, res) => {
   const REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI;
   const REFRESH_TOKEN = process.env.GOOGLE_REFRESH_TOKEN;
 
-  // console.log(CLIENT_ID,":::::",CLIENT_SECRET,":::::",REDIRECT_URI,":::::",REFRESH_TOKEN,":::::",process.env.GMAIL_USER)
-  console.log(req.body)
-
   const oauth2Client = new google.auth.OAuth2(
     CLIENT_ID,
     CLIENT_SECRET,
@@ -147,7 +144,7 @@ router.post("/sendOTP", async (req, res) => {
     const accessToken = await oauth2Client.getAccessToken();
 
     // Create transporter
-    const transporter = nodemailer.createTransport({
+    const transporter = nodemailer.createTransporter({
       service: "gmail",
       auth: {
         type: "OAuth2",
@@ -201,5 +198,13 @@ router.post("/change-password", authenticateAccessToken, async (req, res) => {
   await forwardRequest(req, res, "auth-service", "change-password");
 });
 
+router.get("/search/users", async (req, res) => {
+  logger.info("Handling GET /auth/search/users request");
+  
+  const queryString = new URLSearchParams(req.query).toString();
+  const pathWithQuery = queryString ? `search/users?${queryString}` : "search/users";
+  
+  await forwardRequest(req, res, "auth-service", pathWithQuery);
+});
 
 module.exports = router;
