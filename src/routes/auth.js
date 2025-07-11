@@ -46,12 +46,22 @@ router.post(
 
 router.post(
   "/refresh",
-  validateRefresh,
-  validateResult,
+  (req, res, next) => {
+    logger.info("Refresh request received");
+    next();
+  },
   authenticateRefreshToken,
   async (req, res) => {
     try {
+      logger.info("Processing refresh token request");
+      
+      // The authenticateRefreshToken middleware should have already verified the refresh token
+      // and attached the user data to req.user
       const { user_id, email, username } = req.user;
+      
+      logger.info(`Generating new tokens for user: ${user_id}`);
+      
+      // Generate new tokens
       const newAccessToken = generateAccessToken({ user_id, email, username });
       const newRefreshToken = generateRefreshToken({
         user_id,
@@ -59,12 +69,25 @@ router.post(
         username,
       });
 
-      res.set(
-        "Set-Cookie",
-        `refreshToken=${newRefreshToken}; HttpOnly; Path=/; Max-Age=${
-          7 * 24 * 60 * 60
-        }`
-      );
+      // Set the new refresh token as a regular cookie (not HttpOnly)
+      res.cookie('refreshToken', newRefreshToken, {
+        httpOnly: false, // Allow JavaScript access
+        secure: process.env.NODE_ENV === 'production', // Use secure in production
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        path: '/'
+      });
+      
+      // Set access token cookie too
+      res.cookie('accessToken', newAccessToken, {
+        httpOnly: false, // Allow JavaScript access
+        secure: process.env.NODE_ENV === 'production', // Use secure in production
+        sameSite: 'strict',
+        maxAge: 15 * 60 * 1000, // 15 minutes
+        path: '/'
+      });
+      
+      // Return the new tokens
       res.status(200).json({
         accessToken: newAccessToken,
         refreshToken: newRefreshToken,

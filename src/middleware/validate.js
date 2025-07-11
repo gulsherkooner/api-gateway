@@ -15,7 +15,13 @@ const validateLogin = [
 ];
 
 const validateRefresh = [
-  body('refreshToken').notEmpty().withMessage('Refresh token is required'),
+  // Make refreshToken optional in body since it might come from cookies
+  body('refreshToken')
+    .optional()
+    .isString()
+    .withMessage('Refresh token must be a string')
+    .notEmpty()
+    .withMessage('Refresh token cannot be empty'),
 ];
 
 module.exports = {
