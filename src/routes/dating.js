@@ -75,6 +75,17 @@ router.post('/wallet/deduct', authenticateAccessToken, express.json(), async (re
   req.headers['x-user-id'] = userId; // Inject for downstream service
   await forwardRequest(req, res, 'dating-service', 'api/wallet/deduct');
 });
+router.post('/wallet/withdraw', authenticateAccessToken, express.json(), async (req, res) => {
+  const userId = req.user?.user_id;
+  logger.info('Handling POST /wallet/withdraw request', { user_id: userId });
+
+  if (!userId) {
+    return res.status(401).json({ error: 'Unauthorized: user_id missing from token.' });
+  }
+
+  req.headers['x-user-id'] = userId; // Inject for downstream service
+  await forwardRequest(req, res, 'dating-service', 'api/wallet/withdraw');
+});
 
 
 router.get('/wallet/:userId', async (req, res) => {
